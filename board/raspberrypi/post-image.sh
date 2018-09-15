@@ -66,6 +66,9 @@ __EOF__
 		--skip-sdimg)
 		SEDCMD_SDIMG=" -e '/{SDIMG_START}/,/{SDIMG_END}/d' "
 		;;
+		--kernel=*)
+		sed -e "/^kernel=/s,=.*,=${arg:9}," -i "${BINARIES_DIR}/rpi-firmware/config.txt"
+		;;
 	esac
 
 done
