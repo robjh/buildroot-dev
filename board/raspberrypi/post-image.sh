@@ -50,6 +50,9 @@ __EOF__
 		gpu_mem="${arg:2}"
 		sed -e "/^${gpu_mem%=*}=/s,=.*,=${gpu_mem##*=}," -i "${BINARIES_DIR}/rpi-firmware/config.txt"
 		;;
+		--file=*)
+		FILES+=("${arg:7}")
+		;;
 	esac
 
 done
@@ -72,7 +75,7 @@ fi
 
 for i in ${!FILES[*]}
 do
-	FILES[$i]="\"${FILES[$i]}\","
+	FILES[$i]=$(echo "\"${FILES[$i]}\"," | sed -e 's/[\/&]/\\&/g')
 done
 SEDCMD_BOOTFILES=" -e 's/{BOOT_FILES}/${FILES[*]}/' "
 
