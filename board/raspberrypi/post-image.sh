@@ -4,8 +4,10 @@ set -e
 
 BOARD_DIR="$(dirname $0)"
 BOARD_NAME="$(basename ${BOARD_DIR})"
-GENIMAGE_CFG="${BOARD_DIR}/genimage-${BOARD_NAME}.cfg"
+GENIMAGE_CFG="${BOARD_DIR}/genimage-raspberrypi-generic.cfg"
 GENIMAGE_TMP="${BUILD_DIR}/genimage.tmp"
+
+. ${BOARD_DIR}/${BOARD_NAME}.conf
 
 for arg in "$@"
 do
@@ -49,6 +51,14 @@ __EOF__
 
 done
 
+for i in ${!FILES[*]}
+do
+	FILES[$i]="\"${FILES[$i]}\","
+done
+SEDCMD_BOOTFILES=" -e 's/{BOOT_FILES}/${FILES[*]}/' "
+
+eval "sed ${SEDCMD_BOOTFILES} ${GENIMAGE_CFG}" > ${BUILD_DIR}/genimage.cfg
+
 rm -rf "${GENIMAGE_TMP}"
 
 genimage                           \
@@ -56,6 +66,6 @@ genimage                           \
 	--tmppath "${GENIMAGE_TMP}"    \
 	--inputpath "${BINARIES_DIR}"  \
 	--outputpath "${BINARIES_DIR}" \
-	--config "${GENIMAGE_CFG}"
+	--config "${BUILD_DIR}/genimage.cfg"
 
 exit $?
