@@ -7,6 +7,7 @@ BOARD_NAME="$(basename ${BOARD_DIR})"
 GENIMAGE_CFG="${BOARD_DIR}/genimage-raspberrypi-generic.cfg"
 GENIMAGE_TMP="${BUILD_DIR}/genimage.tmp"
 INCLUDE_OVERLAYS=false
+ROOTFS="rootfs.ext4"
 
 if [ -e ${BOARD_DIR}/${BOARD_NAME}.conf ]
 then
@@ -58,6 +59,9 @@ __EOF__
 		--file=*)
 		FILES+=("${arg:7}")
 		;;
+		--rootfs=*)
+		ROOTFS="${arg:9}"
+		;;
 	esac
 
 done
@@ -87,8 +91,9 @@ do
 	FILES[$i]=$(echo "\"${FILES[$i]}\"," | sed -e 's/[\/&]/\\&/g')
 done
 SEDCMD_BOOTFILES=" -e 's/{BOOT_FILES}/${FILES[*]}/' "
+SEDCMD_ROOTFS=" -e 's/{ROOTFS}/${ROOTFS}/' "
 
-eval "sed ${SEDCMD_BOOTFILES} ${GENIMAGE_CFG}" > ${BUILD_DIR}/genimage.cfg
+eval "sed ${SEDCMD_BOOTFILES} ${SEDCMD_ROOTFS} ${GENIMAGE_CFG}" > ${BUILD_DIR}/genimage.cfg
 
 rm -rf "${GENIMAGE_TMP}"
 
