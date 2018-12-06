@@ -63,6 +63,13 @@ if $INCLUDE_OVERLAYS; then
 	FILES+=('rpi-firmware/overlays')
 fi
 
+# Pull device tree names from the .config file.
+eval `grep BR2_LINUX_KERNEL_INTREE_DTS_NAME .config`
+for dts in $BR2_LINUX_KERNEL_INTREE_DTS_NAME
+do
+	FILES+=( "$(basename $dts).dtb" )
+done
+
 for i in ${!FILES[*]}
 do
 	FILES[$i]="\"${FILES[$i]}\","
