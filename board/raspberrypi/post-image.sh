@@ -61,6 +61,15 @@ do
 	FILES+=( "$(basename $dts).dtb" )
 done
 
+# Pull the kernel target from the .config file.
+eval `egrep '^BR2_LINUX_KERNEL_Z?IMAGE=y$' .config`
+if [ "${BR2_LINUX_KERNEL_IMAGE}" = 'y' ]; then
+	FILES+=( "Image" )
+fi
+if [ "${BR2_LINUX_KERNEL_ZIMAGE}" = 'y' ]; then
+	FILES+=( "zImage" )
+fi
+
 for i in ${!FILES[*]}
 do
 	FILES[$i]="\"${FILES[$i]}\","
