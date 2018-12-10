@@ -1,0 +1,16 @@
+setenv fdtfile bcm2708-rpi-0-w.dtb
+mmc dev 0
+
+if test "${failsafe}" = "1"; then
+	echo Booting Failsafe Kernel
+	fatload mmc 0:1 ${kernel_addr_r} zImage
+	#fatload mmc 0:1 ${fdt_addr_r} ${fdtfile}
+	setenv bootargs earlyprintk console=tty0 console=ttyAMA0 root=/dev/mmcblk0p2 rootfstype=btrfs rootflags=subvol=/@a rootwait noinitrd
+	bootz ${kernel_addr_r} - ${fdt_addr}
+fi
+echo "To boot a failsafe kernel; setenv failsafe 1"
+
+echo Booting Normal Kernel
+load mmc 0:2 ${kernel_addr_r} @a/boot/zImage
+setenv bootargs earlyprintk console=tty0 console=ttyAMA0 root=/dev/mmcblk0p2 rootfstype=btrfs rootflags=subvol=/@a rootwait noinitrd
+bootz ${kernel_addr_r} - ${fdt_addr}

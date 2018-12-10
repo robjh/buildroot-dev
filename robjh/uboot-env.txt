@@ -1,0 +1,3 @@
+subvol-active=linux-180818
+bootargs-tpl=setenv bootargs earlyprintk console=tty0 console=ttyAMA0 root=/dev/mmcblk0p2 rootflags=subvol=${subvol} rootfstype=btrfs rootwait noinitrd
+bootdelay=5
