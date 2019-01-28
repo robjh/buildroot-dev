@@ -6,6 +6,7 @@ BOARD_DIR="$(dirname $0)"
 BOARD_NAME="$(basename ${BOARD_DIR})"
 GENIMAGE_CFG="${BOARD_DIR}/genimage-raspberrypi-generic.cfg"
 GENIMAGE_TMP="${BUILD_DIR}/genimage.tmp"
+INCLUDE_OVERLAYS=false
 
 if [ -e ${BOARD_DIR}/${BOARD_NAME}.conf ]
 then
@@ -23,7 +24,11 @@ do
 # fixes rpi3 ttyAMA0 serial console
 dtoverlay=pi3-miniuart-bt
 __EOF__
+			INCLUDE_OVERLAYS=true
 		fi
+		;;
+		--overlays)
+			INCLUDE_OVERLAYS=true
 		;;
 		--aarch64)
 		# Run a 64bits kernel (armv8)
@@ -53,6 +58,10 @@ __EOF__
 	esac
 
 done
+
+if $INCLUDE_OVERLAYS; then
+	FILES+=('rpi-firmware/overlays')
+fi
 
 for i in ${!FILES[*]}
 do
